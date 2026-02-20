@@ -2,8 +2,8 @@
 
 *Contexte*  
 
-Sur RHEL 10, par défaut le paramètre Storage=auto : tant que /var/log/journal/ n’existe pas,
-journald conserve les logs en volatile sous /run/log/journal/, et ils disparaissent au reboot.
+Sur RHEL 10, par défaut le paramètre 'Storage=auto' (de la conf de journald) implique que tant que /var/log/journal/ n’existe pas,
+journald conserve les logs de manière volatile sous /run/log/journal/, autrement dit les logs disparaissent au reboot.
 
 *Objectifs*
 - Garder les logs de journald de manière permanente (indépendamment des reboots)

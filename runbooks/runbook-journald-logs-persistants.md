@@ -1,6 +1,7 @@
 # RUNBOOK - journald - conserver les logs après un reboot
 
-*Contexte*
+*Contexte*  
+
 Sur RHEL 10, par défaut le paramètre Storage=auto : tant que /var/log/journal/ n’existe pas,
 journald conserve les logs en volatile sous /run/log/journal/, et ils disparaissent au reboot.
 
@@ -10,20 +11,22 @@ journald conserve les logs en volatile sous /run/log/journal/, et ils disparaiss
 - Ne pas perdre les logs du runtime
 
 *Infra*
-- OS: RHEL 10.1 (Coughlan)  (cat /etc/redhat-release)
-- systemd: 257-13.el10      (systemctl --version | head -n1)
-- /var/log FS:
-  / xfs /dev/mapper/rhel-root rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota
-  (findmnt -T /var/log -no TARGET,FSTYPE,SOURCE,OPTIONS)
+- OS: **RHEL 10.1 (Coughlan)**  `cat /etc/redhat-release`
+- **systemd: 257-13.el10**      `systemctl --version | head -n1`
+- **/var/log FS: XFS**          `findmnt -T /var/log -no FSTYPE`
 
 ## Rappel sur journald
 
 ### Quel est le service pour journald ? 
-`sudo systemctl list-unit-files --type=service --no-legend --no-pager | grep -Fi journald`
+```bash
+sudo systemctl list-unit-files --type=service --no-legend --no-pager | grep -Fi journald
+```
 > renvoie uniquement des services statiques
 
 ### Qui déclenche/lance le service static systemd-journald ? 
-`sudo systemctl show -p TriggeredBy --value systemd-journald.service | xargs -n 1 echo`
+```
+sudo systemctl show -p TriggeredBy --value systemd-journald.service | xargs -n 1 echo
+```
 ```text
 systemd-journald-audit.socket
 systemd-journald-dev-log.socket
@@ -32,7 +35,9 @@ systemd-journald.socket
 > systemd-journald.service est déclenché par _socket activation_ 
 
 ### Unit files et Drop-in installés ?
-`sudo systemd-analyze cat-config systemd/journald.conf`
+```bash
+sudo systemd-analyze cat-config systemd/journald.conf
+```
 ```text
 # /usr/lib/systemd/journald.conf
 #  This file is part of systemd.
